@@ -68,3 +68,12 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* Optional: keep the simple gold helpers as a safety net */
+.gold-text {
+  color: #a37d4c;
+}
+
+.gold-text-soft {
+  color: rgba(163, 125, 76, 0.8);
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import { VideoProvider } from "@/context/video-context";
 import { Header } from "@/components/header";
 
 const geistMono = Geist_Mono({
@@ -10,9 +11,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Skal Ventures",
-  description: "Investment strategies that outperform the market",
-    generator: 'v0.app'
+  title: "Cypress Resort | Home",
+  description: "Luxury resort in the North Geogia Mountains",
+  generator: 'Strategic Machines'
 };
 
 export default function RootLayout({
@@ -26,8 +27,10 @@ export default function RootLayout({
         className={`${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <Header />
-        {children}
+        <VideoProvider >        
+          <Header />
+          {children}
+        </VideoProvider>
       </body>
     </html>
   );
