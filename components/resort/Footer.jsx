@@ -1,4 +1,4 @@
-import { LogoWhite } from "../assets";
+import { LogoWhite } from "@/assets";
 
 const Footer = () => (
   <footer className='bg-primary py-12'>

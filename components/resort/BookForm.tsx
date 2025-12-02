@@ -1,5 +1,8 @@
 // components/resort/BookForm.tsx
-import { AdultsDropdown, CheckIn, CheckOut, KidsDropdown } from '.'; // Assuming these are siblings in the components folder or indexed
+import AdultsDropdown  from '@/components/resort/AdultsDropdown'
+import CheckIn from '@/components/resort/CheckIn';
+import CheckOut from '@/components/resort/CheckOut'
+import KidsDropdown  from '@/components/resort/KidsDropdown'
 import { useRoomContext } from '@/context/RoomContext'; // Assuming correct context path
 import React from 'react';
 

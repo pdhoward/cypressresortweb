@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import '../style/datepicker.css'; // Assuming this custom stylesheet exists
+import '@/styles/datepicker.css'; // Assuming this custom stylesheet exists
 import { CalendarIcon } from '@radix-ui/react-icons'; // Radix UI Icon
 
 const CheckOut: React.FC = () => {

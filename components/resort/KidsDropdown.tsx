@@ -1,9 +1,9 @@
 // components/KidsDropdown.tsx
 import React from 'react';
-import { useRoomContext, RoomContextType } from '../context/RoomContext'; // Ensure RoomContextType is exported
-import { kidsList, DropdownItem } from '../constants/data'; // Ensure DropdownItem type is defined
+import { useRoomContext, RoomContextType } from '@/context/RoomContext'; 
+import { kidsList, DropdownItem } from '@/constants/data'; 
 import { Menu } from '@headlessui/react';
-import { ChevronDownIcon } from '@radix-ui/react-icons'; // Radix UI Icon
+import { ChevronDownIcon } from '@radix-ui/react-icons'; 
 
 // Define expected types for the external data
 interface KidsListType extends DropdownItem {
