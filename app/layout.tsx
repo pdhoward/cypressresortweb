@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { VideoProvider } from "@/context/video-context";
+import {TranslationsProvider} from "@/context/translations-context";
 import { Header } from "@/components/header";
 
 const geistMono = Geist_Mono({
@@ -27,10 +28,12 @@ export default function RootLayout({
         className={`${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <VideoProvider >        
-          <Header />
-          {children}
-        </VideoProvider>
+        <TranslationsProvider>
+          <VideoProvider >        
+            <Header />
+            {children}
+          </VideoProvider>
+        </TranslationsProvider>
       </body>
     </html>
   );

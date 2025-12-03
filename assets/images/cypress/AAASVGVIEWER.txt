@@ -1,0 +1,7 @@
+
+
+View the svg through this viewer 
+
+https://www.svgviewer.dev/
+
+Then convert to React Icon

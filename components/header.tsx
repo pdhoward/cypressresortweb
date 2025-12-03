@@ -30,7 +30,7 @@ export const Header = () => {
         </Link>
 
         <nav className="flex max-lg:hidden absolute left-1/2 -translate-x-1/2 items-center justify-center gap-x-10">
-          {["About", "Portfolio", "Insights", "Contact"].map((item) => (
+          {["About", "Villas", "Experiences", "The Journey"].map((item) => (
             <Link
               className={navLinkBase}
               href={`#${item.toLowerCase()}`}

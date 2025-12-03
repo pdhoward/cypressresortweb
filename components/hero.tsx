@@ -8,6 +8,7 @@ import { Pill } from "./pill";
 import { Button } from "./ui/button";
 import { useVideo } from "@/context/video-context";
 import BookForm from "@/components/resort/BookForm";
+import VillaAvailabilityButton from "@/components/controls/VillaAvailabilityButton"
 
 // 👇 Import the stacked logo
 import CypressBadgeWood from "@/assets/icons/CypressBadgeWood";
@@ -91,21 +92,7 @@ export function Hero() {
                 href="/#reservations"
                 onClick={handleReservationsClick}
               >
-                <Button
-                  className="max-sm:hidden"
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
-                >
-                  [Reservations]
-                </Button>
-                <Button
-                  size="sm"
-                  className="sm:hidden"
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
-                >
-                  [Reservations]
-                </Button>
+                <VillaAvailabilityButton />
               </Link>
             )}
           </div>
