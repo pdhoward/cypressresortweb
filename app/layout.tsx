@@ -15,7 +15,19 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cypress Resort | Home",
   description: "Luxury resort in the North Geogia Mountains",
-  generator: 'Strategic Machines'
+  generator: 'Strategic Machines',
+  keywords:
+    "CypressResort, Luxury Villas, Georgia, North Georgia Mountains, Atlanta, Micro Resort, Luxury Resort, Waterfall, Nature",
+  openGraph: {
+    title: "Cypress Resort | Luxury & Nature",
+    siteName: "Cypress Resort",
+    url: "https://www.cypressresort.com",
+    images: [
+      {
+        url: "https://res.cloudinary.com/stratmachine/image/upload/v1764609117/cypress/cypresslogocircle_a0havb.png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
