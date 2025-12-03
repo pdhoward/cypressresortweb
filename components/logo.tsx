@@ -1,9 +1,9 @@
 // components/logo.tsx
 import { ComponentProps } from "react";
-import { CypressBadge } from "@/assets/icons/CypressBadge";
+import CypressIconSnow from "@/assets/icons/CypressIconSnow";
 
 export function Logo(props: ComponentProps<"svg">) {
   return (
-    <CypressBadge width={64} height={64} />
+    <CypressIconSnow width={64} height={64} />
   );
 }
