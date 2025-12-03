@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { VideoProvider } from "@/context/video-context";
+import { RoomContextProvider } from "@/context/room-context";
 import {TranslationsProvider} from "@/context/translations-context";
 import { Header } from "@/components/header";
 
@@ -29,10 +30,12 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <TranslationsProvider>
-          <VideoProvider >        
-            <Header />
-            {children}
-          </VideoProvider>
+          <RoomContextProvider>
+            <VideoProvider >        
+              <Header />
+              {children}
+            </VideoProvider>
+          </RoomContextProvider>
         </TranslationsProvider>
       </body>
     </html>

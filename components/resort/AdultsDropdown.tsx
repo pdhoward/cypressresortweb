@@ -1,6 +1,6 @@
 // components/AdultsDropdown.tsx
 import React from 'react';
-import { useRoomContext, RoomContextType } from '@/context/RoomContext'; // Ensure RoomContextType is exported
+import { useRoomContext, RoomContextType } from '@/context/room-context'; // Ensure RoomContextType is exported
 import { adultsList, DropdownItem } from '@/constants/data'; // Ensure DropdownItem type is defined
 import { Menu } from '@headlessui/react';
 import { ChevronDownIcon } from '@radix-ui/react-icons'; // Radix UI Icon

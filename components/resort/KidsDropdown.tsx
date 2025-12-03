@@ -1,6 +1,6 @@
 // components/KidsDropdown.tsx
 import React from 'react';
-import { useRoomContext, RoomContextType } from '@/context/RoomContext'; 
+import { useRoomContext, RoomContextType } from '@/context/room-context'; 
 import { kidsList, DropdownItem } from '@/constants/data'; 
 import { Menu } from '@headlessui/react';
 import { ChevronDownIcon } from '@radix-ui/react-icons'; 

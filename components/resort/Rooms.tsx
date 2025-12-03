@@ -1,6 +1,6 @@
-import Room  from './Room';
 
-import { useRoomContext, RoomContextType } from '@/context/RoomContext';
+import Room  from './Room';
+import { useRoomContext, RoomContextType } from '@/context/room-context'; 
 // Assuming you have installed the 'spinners-react' package
 import Loading from '@/components/controls/Loading';
 
