@@ -1,12 +1,14 @@
-"use client";
+'use client';
 
 import React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Users } from "lucide-react";
 import { DateRange } from "react-day-picker";
+import { useRouter } from 'next/navigation';
 
 import GuestsDropdown from "@/components/resort/GuestsDropdown";
 import { useRoomContext } from "@/context/room-context";
+import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
@@ -17,10 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 
-// ─────────────────────────────────────────────
-// Compact single-panel date range picker
-// ─────────────────────────────────────────────
-
+// StayDatesPicker (kept as is)
 interface StayDatesPickerProps {
   range: DateRange | undefined;
   onRangeChange: (range: DateRange | undefined) => void;
@@ -35,7 +34,6 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
   const handleSelect = (next: DateRange | undefined) => {
     onRangeChange(next);
 
-    // Close once both dates are chosen
     if (next?.from && next.to) {
       setOpen(false);
     }
@@ -103,13 +101,12 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
           </p>
         </div>
 
-        {/* Compact shadcn Calendar in range mode */}
         <Calendar
           mode="range"
           selected={range}
           onSelect={handleSelect}
           defaultMonth={range?.from}
-          hidden={{ before: new Date() }} // no past dates
+          hidden={{ before: new Date() }}
           autoFocus
           numberOfMonths={1}
           className="p-0 text-xs"
@@ -119,24 +116,28 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
   );
 };
 
-// ─────────────────────────────────────────────
-// Main BookForm
-// ─────────────────────────────────────────────
-
+// BookForm with navigation on submit
 const BookForm: React.FC = () => {
-  const { handleCheck } = useRoomContext();
+  const router = useRouter();
+  const { user } = useAuth();
 
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
 
-  const checkIn = dateRange?.from;
-  const checkOut = dateRange?.to;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dateRange?.from || !dateRange?.to) return;
 
-  // You can later feed checkIn/checkOut into context or handleCheck if needed.
+    const from = format(dateRange.from, 'yyyy-MM-dd');
+    const to = format(dateRange.to, 'yyyy-MM-dd');
+    const adults =  1; // Default to 1 if not set
+
+    router.push(`/reserve?from=${from}&to=${to}&adults=${adults}`);
+  };
 
   return (
     <form
       className="w-full max-w-[900px] mx-auto transition-all duration-500 ease-in-out"
-      onSubmit={handleCheck}
+      onSubmit={handleSubmit}
     >
       <div
         className={cn(
@@ -145,7 +146,6 @@ const BookForm: React.FC = () => {
           "shadow-2xl backdrop-blur-xl overflow-hidden",
         )}
       >
-        {/* Dates column */}
         <div className="flex-1 lg:flex-[1.6] border-b lg:border-b-0 lg:border-r border-amber-500/20">
           <div className="flex h-full flex-col justify-center px-4 py-3 lg:px-5">
             <span className="mb-2 font-mono text-[0.65rem] tracking-[0.25em] uppercase text-amber-200/70">
@@ -155,7 +155,6 @@ const BookForm: React.FC = () => {
           </div>
         </div>
 
-        {/* Guests column */}
         <div className="flex-1 lg:flex-[1.1] border-b lg:border-b-0 lg:border-r border-amber-500/20">
           <div className="flex h-full flex-col justify-center px-4 py-3 lg:px-5">
             <span className="mb-2 flex items-center gap-1 font-mono text-[0.65rem] tracking-[0.25em] uppercase text-amber-200/70">
@@ -168,7 +167,6 @@ const BookForm: React.FC = () => {
           </div>
         </div>
 
-        {/* Submit button column */}
         <div className="flex-1 lg:flex-[0.9]">
           <Button
             type="submit"

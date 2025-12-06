@@ -1,10 +1,22 @@
-"use client";
+'use client';
 
 import { cn } from "@/lib/utils";
-import * as Dialog from "@radix-ui/react-dialog";
-import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import { ChevronDown, Menu as MenuIcon } from 'lucide-react';
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useAuth } from "@/context/auth-context";
+import { useVideo } from "@/context/video-context";
+
+// Reuse NavLink and GatedNavLink from Header (assume they are exported or shared)
+import { NavLink, GatedNavLink } from './header'; // Adjust path if needed
 
 interface MobileMenuProps {
   className?: string;
@@ -12,76 +24,35 @@ interface MobileMenuProps {
 
 export const MobileMenu = ({ className }: MobileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  const menuItems = [
-    { name: "About", href: "#about" },
-    { name: "Villas", href: "#villas" },
-    { name: "Experiences", href: "#experiences" },
-    { name: "The Journey", href: "#journey" },
-  ];
-
-  const handleLinkClick = () => {
-    setIsOpen(false);
-  };
+  const { isAuthenticated } = useAuth();
+  const { showVideo } = useVideo();
 
   return (
-    <Dialog.Root modal={false} open={isOpen} onOpenChange={setIsOpen}>
-      <Dialog.Trigger asChild>
-        <button
-          className={cn(
-            "group lg:hidden p-2 text-foreground transition-colors",
-            className
-          )}
-          aria-label="Open menu"
-        >
-          <Menu className="group-[[data-state=open]]:hidden" size={24} />
-          <X className="hidden group-[[data-state=open]]:block" size={24} />
-        </button>
-      </Dialog.Trigger>
-
-      <Dialog.Portal>
-        <div
-          data-overlay="true"
-          className="fixed z-30 inset-0 bg-black/50 backdrop-blur-sm"
-        />
-
-        <Dialog.Content
-          onInteractOutside={(e) => {
-            if (
-              e.target instanceof HTMLElement &&
-              e.target.dataset.overlay !== "true"
-            ) {
-              e.preventDefault();
-            }
-          }}
-          className="fixed top-0 left-0 w-full z-40 py-28 md:py-40"
-        >
-          <Dialog.Title className="sr-only">Menu</Dialog.Title>
-
-          <nav className="flex flex-col space-y-6 container mx-auto">
-            {menuItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={handleLinkClick}
-                className="text-xl font-mono uppercase text-foreground/60 transition-colors ease-out duration-150 hover:text-foreground/100 py-2"
-              >
-                {item.name}
-              </Link>
-            ))}
-
-            <div className="mt-6">
-              <Link
-                href="/#sign-in"
-                onClick={handleLinkClick}
-                className="inline-block text-xl font-mono uppercase text-primary transition-colors ease-out duration-150 hover:text-primary/80 py-2"
-              >
-                Sign In
-              </Link>
-            </div>
-          </nav>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className={cn("lg:hidden text-foreground hover:text-foreground/70", className)} aria-label="Open mobile menu">
+          <MenuIcon className="h-6 w-6" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0">
+        <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-gray-800">
+          <DialogTitle className="text-xl font-bold text-white">Menu</DialogTitle>
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:text-white/70">
+            <ChevronDown className="h-5 w-5 rotate-180" />
+          </Button>
+        </DialogHeader>
+        <ScrollArea className="flex-1 px-4 py-6">
+          <div className="flex flex-col space-y-4">
+            <NavLink href="/about" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>About</NavLink>
+            <GatedNavLink href="/gallery" active={false} enabled={isAuthenticated} showVideo={showVideo}>
+              Villas
+            </GatedNavLink>
+            <NavLink href="/experiences" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Experiences</NavLink>
+            <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
+            <NavLink href="/#sign-in" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Sign In</NavLink>
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
   );
 };

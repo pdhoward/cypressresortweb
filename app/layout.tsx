@@ -5,6 +5,9 @@ import "./globals.css";
 import { VideoProvider } from "@/context/video-context";
 import { RoomContextProvider } from "@/context/room-context";
 import {TranslationsProvider} from "@/context/translations-context";
+import { ThemeProvider } from '@/context/theme-context';
+import { AuthProvider } from '@/context/auth-context';
+
 import { Header } from "@/components/header";
 
 const geistMono = Geist_Mono({
@@ -36,19 +39,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <TranslationsProvider>
-          <RoomContextProvider>
-            <VideoProvider >        
-              <Header />
-              {children}
-            </VideoProvider>
-          </RoomContextProvider>
-        </TranslationsProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <TranslationsProvider>
+              <RoomContextProvider>
+                <VideoProvider >        
+                  <Header />
+                  {children}
+                </VideoProvider>
+              </RoomContextProvider>
+            </TranslationsProvider>
+          </AuthProvider>
+      </ThemeProvider>
       </body>
     </html>
   );

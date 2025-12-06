@@ -88,7 +88,7 @@ export function Hero() {
             ) : (
               <Link
                 className="contents"
-                href="/#reservations"
+                href="/#reservation"
                 onClick={handleReservationsClick}
               >
                 <VillaAvailabilityButton />
