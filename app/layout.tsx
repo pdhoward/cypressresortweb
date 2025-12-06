@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { VideoProvider } from "@/context/video-context";
-import { RoomContextProvider } from "@/context/room-context";
-import {TranslationsProvider} from "@/context/translations-context";
-import { ThemeProvider } from '@/context/theme-context';
-import { AuthProvider } from '@/context/auth-context';
-
-import { Header } from "@/components/header";
+import { AppProviders } from "./providers";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -18,7 +12,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cypress Resort | Home",
   description: "Luxury resort in the North Geogia Mountains",
-  generator: 'Strategic Machines',
+  generator: "Strategic Machines",
   keywords:
     "CypressResort, Luxury Villas, Georgia, North Georgia Mountains, Atlanta, Micro Resort, Luxury Resort, Waterfall, Nature",
   openGraph: {
@@ -39,23 +33,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-     <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider>
-          <AuthProvider>
-            <TranslationsProvider>
-              <RoomContextProvider>
-                <VideoProvider >        
-                  <Header />
-                  {children}
-                </VideoProvider>
-              </RoomContextProvider>
-            </TranslationsProvider>
-          </AuthProvider>
-      </ThemeProvider>
+        <AppProviders>
+          {children}
+        </AppProviders>
       </body>
     </html>
   );

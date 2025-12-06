@@ -10,7 +10,7 @@ import { useAuth } from "@/context/auth-context"; // Assuming this exists or add
 import { openAccessGate } from '@/lib/access-gate'; // Assuming this exists based on guide
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-// ThemeToggleButton (kept as is)
+
 const ThemeToggleButton = () => {
   const { theme, toggleTheme } = useTheme();
   
