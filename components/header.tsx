@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils';
 import { MobileMenu } from "./mobile-menu";
 import { useVideo } from "@/context/video-context";
 import { useTheme } from "@/context/theme-context";
-import { useAuth } from "@/context/auth-context"; // Assuming this exists or add if needed
-import { openAccessGate } from '@/lib/access-gate'; // Assuming this exists based on guide
+import { useAuth } from "@/context/auth-context"; 
+import { openAccessGate } from '@/lib/access-gate'; 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
@@ -39,7 +39,6 @@ const ThemeToggleButton = () => {
   );
 };
 
-// GatedNavLink (copied from guide)
 export function GatedNavLink({
   href,
   children,
@@ -65,7 +64,7 @@ export function GatedNavLink({
             onClick={openAccessGate}
             className="cursor-not-allowed opacity-60"
           >
-            <span className={cn('flex items-center gap-2 text-sm font-medium text-white/80', active && 'font-semibold')}>
+            <span className={cn('flex items-center gap-2 text-sm font-bold text-white/80', active && 'font-semibold')}>
               {children}
             </span>
           </button>
@@ -80,7 +79,6 @@ export function GatedNavLink({
   );
 }
 
-// NavLink (adapted for app styles)
 export function NavLink({
   href,
   children,
@@ -138,9 +136,10 @@ export const Header = () => {
         {/* Desktop Navigation */}
         <nav className="flex max-lg:hidden absolute left-1/2 -translate-x-1/2 items-center justify-center gap-x-10">
           <NavLink href="/about" active={false} showVideo={showVideo}>About</NavLink>
-          <GatedNavLink href="/gallery" active={false} enabled={isAuthenticated} showVideo={showVideo}>Villas</GatedNavLink>
+          <NavLink href="/gallery" active={false} showVideo={showVideo}>Villas</NavLink>
           <NavLink href="/experiences" active={false} showVideo={showVideo}>Experiences</NavLink>
           <NavLink href="/journey" active={false} showVideo={showVideo}>The Journey</NavLink>
+          <GatedNavLink href="/reservations" active={false} enabled={isAuthenticated} showVideo={showVideo}>Your Reservations</GatedNavLink>
         </nav>
         
         <div className="flex items-center gap-x-6">

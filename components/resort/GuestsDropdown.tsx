@@ -20,6 +20,10 @@ type AdultsOption = DropdownItem & {
 const GuestsDropdown: React.FC = () => {
   const { adults, setAdults } = useRoomContext();
 
+  // Default display: "Not Selected"
+  const displayAdults =
+    adults && adults !== "0" ? adults : "Not Selected";
+
   return (
     <div className="flex h-full w-full items-stretch font-mono text-xs sm:text-sm uppercase">
       <DropdownMenu>
@@ -31,10 +35,10 @@ const GuestsDropdown: React.FC = () => {
               "px-4 sm:px-6 md:px-8",
               "text-foreground/80 hover:text-amber-200",
               "transition-colors duration-150",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/80 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             )}
           >
-            <span className="tracking-[0.25em]">{adults}</span>
+            <span className="tracking-[0.25em]">{displayAdults}</span>
             <ChevronDown className="h-4 w-4 text-primary transition-transform duration-200 group-data-[state=open]:rotate-180" />
           </button>
         </DropdownMenuTrigger>
@@ -44,7 +48,7 @@ const GuestsDropdown: React.FC = () => {
           className={cn(
             "w-[var(--radix-dropdown-menu-trigger-width)] min-w-[10rem]",
             "bg-background/95 border border-primary/20",
-            "shadow-2xl backdrop-blur-sm"
+            "shadow-2xl backdrop-blur-sm",
           )}
         >
           {(adultsList as AdultsOption[]).map((item) => (
@@ -56,7 +60,7 @@ const GuestsDropdown: React.FC = () => {
                 "text-xs sm:text-sm tracking-[0.18em]",
                 "text-foreground/70 hover:text-primary",
                 "hover:bg-primary/10",
-                "cursor-pointer"
+                "cursor-pointer",
               )}
             >
               {item.name}
@@ -69,3 +73,4 @@ const GuestsDropdown: React.FC = () => {
 };
 
 export default GuestsDropdown;
+

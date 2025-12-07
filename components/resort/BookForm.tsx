@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
 import React from "react";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import { Calendar as CalendarIcon, Users } from "lucide-react";
 import { DateRange } from "react-day-picker";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 import GuestsDropdown from "@/components/resort/GuestsDropdown";
 import { useRoomContext } from "@/context/room-context";
@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 
-// StayDatesPicker (kept as is)
+/* ---------- StayDatesPicker (your refactored version) ---------- */
+
 interface StayDatesPickerProps {
   range: DateRange | undefined;
   onRangeChange: (range: DateRange | undefined) => void;
@@ -30,13 +31,35 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
   onRangeChange,
 }) => {
   const [open, setOpen] = React.useState(false);
+  const [selectionMode, setSelectionMode] =
+    React.useState<"checkin" | "checkout">("checkin");
 
   const handleSelect = (next: DateRange | undefined) => {
-    onRangeChange(next);
+    if (!next?.from) {
+      onRangeChange(undefined);
+      setSelectionMode("checkin");
+      return;
+    }
 
-    if (next?.from && next.to) {
+    // First click → set minimum 1-night stay
+    if (next.from && !next.to) {
+      const nextDay = addDays(next.from, 1);
+      const rangeWithMin: DateRange = { from: next.from, to: nextDay };
+      onRangeChange(rangeWithMin);
+      setSelectionMode("checkout");
+      return;
+    }
+
+    if (next.from && next.to) {
+      onRangeChange(next);
+      setSelectionMode("checkin");
       setOpen(false);
     }
+  };
+
+  const handleClear = () => {
+    onRangeChange(undefined);
+    setSelectionMode("checkin");
   };
 
   const checkIn = range?.from;
@@ -51,13 +74,15 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
 
   const helperText =
     checkIn && checkOut
-      ? `Selected: ${format(checkIn, "MM/dd")} → ${format(
-          checkOut,
-          "MM/dd",
-        )}`
+      ? `Selected: ${format(checkIn, "MM/dd")} → ${format(checkOut, "MM/dd")}`
       : checkIn
-        ? `Choose a checkout date after ${format(checkIn, "MM/dd")}`
-        : "Choose your check-in date to begin.";
+      ? `Choose a checkout date after ${format(checkIn, "MM/dd")}`
+      : "Choose your check-in date to begin.";
+
+  const selectionText =
+    selectionMode === "checkin"
+      ? "Selecting: Check-in date"
+      : "Selecting: Checkout date";
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -92,13 +117,28 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
           "p-3 shadow-2xl backdrop-blur-xl",
         )}
       >
-        <div className="mb-2 space-y-1">
-          <h4 className="font-sans text-xs font-semibold uppercase tracking-[0.24em] text-amber-300">
-            Book Your Stay
-          </h4>
-          <p className="font-mono text-[0.63rem] uppercase tracking-[0.18em] text-amber-200/80">
-            {helperText}
-          </p>
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <div className="space-y-1">
+            <h4 className="font-sans text-xs font-semibold uppercase tracking-[0.24em] text-amber-300">
+              Book Your Stay
+            </h4>
+            <p className="font-mono text-[0.63rem] uppercase tracking-[0.18em] text-amber-200/80">
+              {helperText}
+            </p>
+            <p className="font-mono text-[0.6rem] uppercase tracking-[0.18em] text-amber-300/80">
+              {selectionText}
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            className="h-7 px-2 py-1 font-mono text-[0.6rem] uppercase tracking-[0.18em] text-amber-200/80 hover:text-amber-100"
+          >
+            Clear
+          </Button>
         </div>
 
         <Calendar
@@ -110,28 +150,47 @@ const StayDatesPicker: React.FC<StayDatesPickerProps> = ({
           autoFocus
           numberOfMonths={1}
           className="p-0 text-xs"
+          classNames={{
+            head_cell:
+              "text-[0.65rem] font-mono text-amber-200/70 w-9 text-center",
+            day: "h-9 w-9 p-0 font-normal text-xs text-center aria-selected:opacity-100",
+          }}
         />
       </PopoverContent>
     </Popover>
   );
 };
 
-// BookForm with navigation on submit
+/* -------------------------- BookForm using context -------------------------- */
+
 const BookForm: React.FC = () => {
   const router = useRouter();
+  const { adults } = useRoomContext();
   const { user } = useAuth();
+  console.log(`[BOOKFORM AUTH CONTEXT] - ${user}`);
 
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
 
+  // Parse adults string from context into a number; treat "Not Selected" as 0
+  const adultsCount = React.useMemo(() => {
+    if (!adults || adults === "Not Selected" || adults === "0") return 0;
+    const parsed = parseInt(adults, 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, [adults]);
+
+  const hasValidDates = Boolean(dateRange?.from && dateRange?.to);
+  const hasGuests = adultsCount > 0;
+
+  const isFormValid = hasValidDates && hasGuests;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!dateRange?.from || !dateRange?.to) return;
+    if (!isFormValid || !dateRange?.from || !dateRange?.to) return;
 
-    const from = format(dateRange.from, 'yyyy-MM-dd');
-    const to = format(dateRange.to, 'yyyy-MM-dd');
-    const adults =  1; // Default to 1 if not set
+    const from = format(dateRange.from, "yyyy-MM-dd");
+    const to = format(dateRange.to, "yyyy-MM-dd");
 
-    router.push(`/reserve?from=${from}&to=${to}&adults=${adults}`);
+    router.push(`/reserve?from=${from}&to=${to}&adults=${adultsCount}`);
   };
 
   return (
@@ -146,6 +205,7 @@ const BookForm: React.FC = () => {
           "shadow-2xl backdrop-blur-xl overflow-hidden",
         )}
       >
+        {/* Dates */}
         <div className="flex-1 lg:flex-[1.6] border-b lg:border-b-0 lg:border-r border-amber-500/20">
           <div className="flex h-full flex-col justify-center px-4 py-3 lg:px-5">
             <span className="mb-2 font-mono text-[0.65rem] tracking-[0.25em] uppercase text-amber-200/70">
@@ -155,6 +215,7 @@ const BookForm: React.FC = () => {
           </div>
         </div>
 
+        {/* Guests */}
         <div className="flex-1 lg:flex-[1.1] border-b lg:border-b-0 lg:border-r border-amber-500/20">
           <div className="flex h-full flex-col justify-center px-4 py-3 lg:px-5">
             <span className="mb-2 flex items-center gap-1 font-mono text-[0.65rem] tracking-[0.25em] uppercase text-amber-200/70">
@@ -167,15 +228,18 @@ const BookForm: React.FC = () => {
           </div>
         </div>
 
+        {/* Submit */}
         <div className="flex-1 lg:flex-[0.9]">
           <Button
             type="submit"
+            disabled={!isFormValid}
             className={cn(
               "flex h-full w-full items-center justify-center px-4 py-4 lg:px-3 lg:py-0",
               "font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.28em]",
-              "rounded-none bg-amber-500 text-gray-900",
-              "hover:bg-amber-400 transition-colors duration-200",
-              "border-t lg:border-t-0 lg:border-l border-amber-500/30",
+              "rounded-none border-t lg:border-t-0 lg:border-l border-amber-500/30",
+              isFormValid
+                ? "bg-amber-500 text-gray-900 hover:bg-amber-400 transition-colors duration-200"
+                : "bg-amber-500/30 text-gray-500 cursor-not-allowed",
             )}
           >
             Check Now

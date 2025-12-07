@@ -44,12 +44,16 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
         <ScrollArea className="flex-1 px-4 py-6">
           <div className="flex flex-col space-y-4">
             <NavLink href="/about" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>About</NavLink>
-            <GatedNavLink href="/gallery" active={false} enabled={isAuthenticated} showVideo={showVideo}>
+            <NavLink href="/gallery" active={false} showVideo={showVideo}>
               Villas
-            </GatedNavLink>
+            </NavLink>
             <NavLink href="/experiences" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Experiences</NavLink>
             <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
+            <GatedNavLink href="/reservations" active={false} enabled={isAuthenticated} showVideo={showVideo}>
+              Your Reservations
+            </GatedNavLink>
             <NavLink href="/#sign-in" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Sign In</NavLink>
+            
           </div>
         </ScrollArea>
       </DialogContent>
