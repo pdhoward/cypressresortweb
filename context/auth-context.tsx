@@ -1,15 +1,26 @@
 // src/contexts/AuthContext.tsx
 'use client';
 
-import { createContext, useContext, useState, useEffect, Dispatch, SetStateAction } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  Dispatch,
+  SetStateAction,
+} from 'react';
+import { decodeJwt } from 'jose';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   user: { email: string } | null;
   setUser: Dispatch<SetStateAction<{ email: string } | null>>;
+  token: string | null;
+  setToken: Dispatch<SetStateAction<string | null>>;
   signout: () => Promise<void>;
-  refreshSession: () => Promise<void>; // NEW
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,21 +28,38 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   const refreshSession = async () => {
     try {
       const res = await fetch('/api/auth/session', { cache: 'no-store' });
       if (!res.ok) throw new Error('session fetch failed');
-      const data: { token: string | null; email: string | null } = await res.json();
+
+      const data: { token: string | null; email: string | null } =
+        await res.json();
 
       if (data?.token) {
+        setToken(data.token);
         setIsAuthenticated(true);
-        setUser(data?.email ? { email: data.email } : null);
+
+        // Prefer explicit email from API; fall back to decoding token
+        if (data.email) {
+          setUser({ email: data.email });
+        } else {
+          try {
+            const claims = decodeJwt(data.token) as { email?: string };
+            setUser(claims.email ? { email: claims.email } : null);
+          } catch {
+            setUser(null);
+          }
+        }
       } else {
+        setToken(null);
         setIsAuthenticated(false);
-        setUser(data?.email ? { email: data.email } : null); // tolerate decoded email case
+        setUser(data?.email ? { email: data.email } : null);
       }
     } catch {
+      setToken(null);
       setIsAuthenticated(false);
       setUser(null);
     }
@@ -44,7 +72,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await refreshSession();
     })();
 
-    // listen for any auth changes from the AccessGate
     const onAuthUpdated = () => refreshSession();
     window.addEventListener('auth-updated', onAuthUpdated);
 
@@ -60,15 +87,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsAuthenticated(false);
       setUser(null);
-      // also let anyone else know
+      setToken(null);
       window.dispatchEvent(new CustomEvent('auth-updated'));
     }
   };
 
+  const value = useMemo(
+    () => ({
+      isAuthenticated,
+      setIsAuthenticated,
+      user,
+      setUser,
+      token,
+      setToken,
+      signout,
+      refreshSession,
+    }),
+    [isAuthenticated, user, token],
+  );
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, signout, refreshSession }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 }
 

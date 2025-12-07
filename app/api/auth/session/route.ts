@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function GET(_req: NextRequest) {
   const cookieStore = await cookies();
-  const t = cookieStore.get("machine_session")?.value;
+  const t = cookieStore.get("cypress_session")?.value;
   if (!t) return NextResponse.json({ token: null, email: null, exp: null }, { status: 200 });
 
   try {

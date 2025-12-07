@@ -11,7 +11,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 export async function sendOtpEmail(to: string, code: string) {
-  const from = process.env.TRANSPORT_LABEL ?? `"Strategic Machines" <${process.env.TRANSPORT_SENDER}>`;
+  const from = process.env.TRANSPORT_CYPRESS_LABEL ?? `"Cypress Resort" <${process.env.TRANSPORT_SENDER}>`;
   const html = `
     <div style="font-family:Inter,system-ui,Segoe UI,Helvetica,Arial,sans-serif">
       <h2>Your verification code</h2>

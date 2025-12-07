@@ -7,6 +7,7 @@ import { MobileMenu } from "./mobile-menu";
 import { useVideo } from "@/context/video-context";
 import { useTheme } from "@/context/theme-context";
 import { useAuth } from "@/context/auth-context"; 
+import { AccessGate } from "@/components/security/access-gate";
 import { openAccessGate } from '@/lib/access-gate'; 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -143,9 +144,7 @@ export const Header = () => {
         </nav>
         
         <div className="flex items-center gap-x-6">
-          <Link className={signInClasses} href="/#sign-in">
-            Sign In
-          </Link>
+           <AccessGate />
           <ThemeToggleButton />
           <MobileMenu />
         </div>

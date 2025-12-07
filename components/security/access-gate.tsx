@@ -10,13 +10,13 @@ import {
   RotateCcw,
   LogOut,
   Loader2,
-  HelpCircle, // disclaimer icon
+  HelpCircle,
 } from "lucide-react";
 import { decodeJwt } from "jose";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTenant } from "@/context/tenant-context";
+import { useAuth } from "@/context/auth-context"; 
 import {
   Popover,
   PopoverTrigger,
@@ -29,19 +29,29 @@ import {
   InputOTPSlot,
   InputOTPSeparator,
 } from "@/components/ui/input-otp";
+
 const MotionHelpCircle = motion.create(HelpCircle);
 
-import { DISCLAIMER_TEXT, DISCLAIMER_TITLE } from "@/assets/disclaimers/20251030"; // NEW: Import shared disclaimer
+import {
+  DISCLAIMER_TEXT,
+  DISCLAIMER_TITLE,
+} from "@/assets/disclaimers/20251030";
 
 type Stage = "email" | "otp" | "done";
 type VisualState = "default" | "error" | "success";
 
 export function AccessGate() {
-  const { tenantId, token, setToken } = useTenant();
+  const {
+    isAuthenticated,
+    user,
+    token,
+    setToken,
+    setIsAuthenticated,
+    setUser,
+    signout,
+  } = useAuth();
 
-  // popover open/close state so it behaves like a dropdown
   const [open, setOpen] = useState(false);
-
   const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -49,24 +59,22 @@ export function AccessGate() {
   const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // OTP as single string (input-otp supports it)
   const [otp, setOtp] = useState("");
   const isSix = /^\d{6}$/.test(otp);
 
-  // server supplies this after sending
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
 
-  const isAuthed = useMemo(() => Boolean(token), [token]);
-  const visualState: VisualState = error ? "error" : stage === "done" ? "success" : "default";
-
-  // simple resend cooldown (in seconds)
   const [cooldown, setCooldown] = useState(0);
 
-  // decode token (display only)
+  const isAuthed = useMemo(
+    () => isAuthenticated || Boolean(token),
+    [isAuthenticated, token],
+  );
+
   const decodedEmail = useMemo(() => {
     if (!token) return null;
     try {
-      const claims = decodeJwt(token) as { email?: string | undefined };
+      const claims = decodeJwt(token) as { email?: string };
       return claims.email ?? null;
     } catch {
       return null;
@@ -76,10 +84,11 @@ export function AccessGate() {
   useEffect(() => {
     if (isAuthed) {
       setStage("done");
+    } else {
+      setStage("email");
     }
   }, [isAuthed]);
 
-  // Auto-verify once 6 digits entered
   useEffect(() => {
     if (stage === "otp" && isSix && !verifying) {
       verify(otp);
@@ -87,21 +96,28 @@ export function AccessGate() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp, stage]);
 
-  // countdown effect for resend
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setInterval(() => setCooldown((s) => (s > 0 ? s - 1 : 0)), 1000);
     return () => clearInterval(t);
   }, [cooldown]);
 
+  const visualState: VisualState = error
+    ? "error"
+    : stage === "done"
+    ? "success"
+    : "default";
+
   function maskEmail(v: string | null) {
     if (!v) return "";
-    const [user, domain] = v.split("@");
-    if (!user || !domain) return v;
+    const [userPart, domain] = v.split("@");
+    if (!userPart || !domain) return v;
     const maskedUser =
-      user.length <= 2
-        ? user[0] + "*"
-        : user[0] + "*".repeat(user.length - 2) + user[user.length - 1];
+      userPart.length <= 2
+        ? userPart[0] + "*"
+        : userPart[0] +
+          "*".repeat(userPart.length - 2) +
+          userPart[userPart.length - 1];
     return `${maskedUser}@${domain}`;
   }
 
@@ -109,17 +125,18 @@ export function AccessGate() {
     setError(null);
     setSending(true);
     try {
+      const userId = email;
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
-        body: JSON.stringify({ email, tenantId }),
+        body: JSON.stringify({ email, user: userId }), // user-based, no tenantId
         headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Email failed");
       setChallengeToken(data.challengeToken);
       setStage("otp");
-      setOtp(""); // reset digits
-      setCooldown(30); // simple resend throttle
+      setOtp("");
+      setCooldown(30);
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -132,17 +149,31 @@ export function AccessGate() {
     setError(null);
     setVerifying(true);
     try {
+      const userId = email;
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
-        body: JSON.stringify({ email, code, challengeToken, tenantId }),
+        body: JSON.stringify({ email, code, challengeToken, user: userId  }), // user-based
         headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Verification failed");
-      // cookie is also set server-side; mirror to context for client logic
-      setToken(data.sessionToken);
+
+      // session cookie is set server-side; mirror in context
+      if (data.sessionToken) {
+        setToken(data.sessionToken);
+        setIsAuthenticated(true);
+
+        const resolvedEmail =
+          data.email ?? email ?? decodedEmail ?? user?.email ?? null;
+        if (resolvedEmail) {
+          setUser({ email: resolvedEmail });
+        }
+      }
+
+      // let the rest of the app know
+      window.dispatchEvent(new CustomEvent("auth-updated"));
+
       setStage("done");
-      // auto-close after a moment
       setTimeout(() => setOpen(false), 600);
     } catch (e: any) {
       setError(e.message);
@@ -152,17 +183,15 @@ export function AccessGate() {
     }
   }
 
-  async function signOut() {
+  async function handleSignOut() {
     setError(null);
     setSigningOut(true);
-    try {
-      fetch("/api/transcripts/finalize", { method: "POST" }), // capture transcripts
-      await fetch("/api/auth/signout", { method: "POST" });
-    } catch (e: any) {
-      // even if API errors, clear local token so UI locks down
+    try {     
+      await signout(); // context signout handles /api/auth/signout + broadcasting
+    } catch {
+      // ignore; context still clears local state
     } finally {
       setSigningOut(false);
-      setToken(null);
       setStage("email");
       setOtp("");
       setEmail("");
@@ -180,7 +209,8 @@ export function AccessGate() {
     }
   }
 
-  const signedInAs = email || decodedEmail || null;
+  const signedInAs =
+    user?.email || email || decodedEmail || null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -188,7 +218,7 @@ export function AccessGate() {
         <Button
           variant="outline"
           size="sm"
-          aria-label={isAuthed ? "Tenant access granted" : "Open access gate"}
+          aria-label={isAuthed ? "Guest access granted" : "Open access gate"}
           className="flex items-center gap-2 max-md:h-9 max-md:w-9 max-md:px-0"
         >
           {isAuthed ? (
@@ -210,8 +240,9 @@ export function AccessGate() {
           <div className="flex items-center gap-2">
             <LockKeyhole className="h-4 w-4" />
             <p className="text-sm font-medium">
-              {stage === "done" ? "Agent Activated" : "Activate Agent"}
+              {stage === "done" ? "Guest Access Activated" : "Activate Guest Access"}
             </p>
+
             {/* Disclaimer icon with nested popover */}
             <Popover>
               <PopoverTrigger asChild>
@@ -221,21 +252,23 @@ export function AccessGate() {
                   className="h-5 w-5 ml-1"
                   aria-label="View disclaimer"
                 >
-                  <MotionHelpCircle 
+                  <MotionHelpCircle
                     className="h-4 w-4 text-muted-foreground"
                     animate={{
-                      color: ["#6b7280", "#10b981", "#6b7280"] // from muted-foreground (gray) to emerald-500 (green) and back
+                      color: ["#6b7280", "#10b981", "#6b7280"],
                     }}
                     transition={{
                       duration: 1.5,
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      ease: "easeInOut",
                     }}
                   />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-4">
-                <h3 className="text-sm font-medium mb-2">{DISCLAIMER_TITLE}</h3>
+                <h3 className="text-sm font-medium mb-2">
+                  {DISCLAIMER_TITLE}
+                </h3>
                 <p className="text-xs text-muted-foreground whitespace-pre-line">
                   {DISCLAIMER_TEXT}
                 </p>
@@ -269,7 +302,11 @@ export function AccessGate() {
                   />
                 </div>
                 <div className="flex items-center justify-end gap-2">
-                  <Button size="sm" onClick={sendEmail} disabled={!email || sending}>
+                  <Button
+                    size="sm"
+                    onClick={sendEmail}
+                    disabled={!email || sending}
+                  >
                     {sending ? "Sending…" : "Send code"}
                   </Button>
                 </div>
@@ -294,8 +331,7 @@ export function AccessGate() {
                     aria-label="Enter 6-digit code"
                     value={otp}
                     onChange={setOtp}
-                    maxLength={6}
-                    state={visualState as any}
+                    maxLength={6}                   
                     inputMode="numeric"
                     autoComplete="one-time-code"
                     autoFocus
@@ -315,7 +351,9 @@ export function AccessGate() {
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8"
-                    title={cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+                    title={
+                      cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"
+                    }
                     onClick={sendEmail}
                     disabled={cooldown > 0 || sending}
                   >
@@ -357,7 +395,10 @@ export function AccessGate() {
               >
                 {signedInAs && (
                   <p className="text-xs text-muted-foreground">
-                    Signed in as <span className="font-medium">{maskEmail(signedInAs)}</span>
+                    Signed in as{" "}
+                    <span className="font-medium">
+                      {maskEmail(signedInAs)}
+                    </span>
                   </p>
                 )}
 
@@ -370,7 +411,7 @@ export function AccessGate() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={signOut}
+                    onClick={handleSignOut}
                     disabled={signingOut}
                     className="inline-flex items-center gap-2"
                   >
@@ -391,7 +432,9 @@ export function AccessGate() {
             )}
           </AnimatePresence>
 
-          {error && <div className="text-[11px] text-red-500 font-medium">{error}</div>}
+          {error && (
+            <div className="text-[11px] text-red-500 font-medium">{error}</div>
+          )}
         </div>
       </PopoverContent>
     </Popover>

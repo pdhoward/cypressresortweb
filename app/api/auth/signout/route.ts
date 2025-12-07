@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const c = await cookies();
 
   // Read the same cookie your session code uses
-  const token = c.get("machine_session")?.value || null;
+  const token = c.get("cypress_session")?.value || null;
 
   // Always clear both (defensive, covers any legacy cookie)
   const clear = (name: string) =>
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       maxAge: 0,
     });
 
-  clear("machine_session"); 
+  clear("cypress_session"); 
 
   // If no token, just succeed (idempotent)
   if (!token) {

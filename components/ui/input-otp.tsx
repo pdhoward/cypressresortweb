@@ -6,6 +6,9 @@ import { Dot } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// Optional state type for visual styling
+type OTPSlotState = "default" | "error" | "success"
+
 const InputOTP = React.forwardRef<
   React.ElementRef<typeof OTPInput>,
   React.ComponentPropsWithoutRef<typeof OTPInput>
@@ -32,8 +35,11 @@ InputOTPGroup.displayName = "InputOTPGroup"
 
 const InputOTPSlot = React.forwardRef<
   React.ElementRef<"div">,
-  React.ComponentPropsWithoutRef<"div"> & { index: number }
->(({ index, className, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<"div"> & {
+    index: number
+    state?: OTPSlotState
+  }
+>(({ index, state = "default", className, ...props }, ref) => {
   const inputOTPContext = React.useContext(OTPInputContext)
   const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
 
@@ -43,6 +49,8 @@ const InputOTPSlot = React.forwardRef<
       className={cn(
         "relative flex h-10 w-10 items-center justify-center border-y border-r border-input text-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md",
         isActive && "z-10 ring-2 ring-ring ring-offset-background",
+        state === "error" && "border-red-500 text-red-500",
+        state === "success" && "border-emerald-500 text-emerald-500 bg-emerald-500/5",
         className
       )}
       {...props}
@@ -69,3 +77,4 @@ const InputOTPSeparator = React.forwardRef<
 InputOTPSeparator.displayName = "InputOTPSeparator"
 
 export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator }
+

@@ -5,15 +5,15 @@ import { sendOtpEmail } from "@/lib/email/transporter";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, tenantId } = await req.json();
+    const { email, user } = await req.json();
 
-    if (!email || !tenantId) {
+    if (!email || !user) {
       return NextResponse.json({ error: "Missing email or tenantId" }, { status: 400 });
     }
 
     const code = genSixDigit();
     const codeHash = hashCode(code, email);
-    const challengeToken = makeChallengeToken(email, tenantId, codeHash);
+    const challengeToken = makeChallengeToken(email, user, codeHash);
     
     // fire and forget email
     await sendOtpEmail(email, code);

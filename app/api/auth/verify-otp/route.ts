@@ -16,9 +16,9 @@ function maskCode(code: string) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, code, challengeToken, tenantId } = await req.json();
+    const { email, code, challengeToken, user } = await req.json();
 
-    if (!email || !code || !challengeToken || !tenantId) {
+    if (!email || !code || !challengeToken || !user) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     if (payload.sub !== "otp_challenge") {
       return NextResponse.json({ error: "Invalid challenge" }, { status: 400 });
     }
-    if (payload.email !== email || payload.tenantId !== tenantId) {
+    if (payload.email !== email || payload.tenantId !== user) {
       return NextResponse.json({ error: "Mismatched challenge" }, { status: 400 });
     }
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // OK — mint session token
-    const sessionToken = makeSessionToken(email, tenantId);
+    const sessionToken = makeSessionToken(email, user);
 
     // Persist session to Mongo (multitenant-aware)
     const { uri, dbName } = await getMongoSecrets();
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     const now = new Date();
     const sessionDoc = {
       kind: "otp_session",
-      tenantId,
+      user,
       email,
       codeMasked: maskCode(code),           // human-friendly audit
       codeHash: providedHash,               // hash(email + code) from your otp lib
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     // Set HttpOnly cookie
     const cookieStore = await cookies();
-    cookieStore.set("machine_session", sessionToken, {
+    cookieStore.set("cypress_session", sessionToken, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",

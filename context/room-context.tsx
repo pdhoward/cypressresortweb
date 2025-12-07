@@ -37,7 +37,7 @@ export const RoomContextProvider: React.FC<RoomContextProviderProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   // States for user selection
-  const [adults, setAdults] = useState<string>("1 Adult");
+  const [adults, setAdults] = useState<string>("");
   const [kids, setKids] = useState<string>("0 Kid");
 
   // Helper to compute total people from the current strings

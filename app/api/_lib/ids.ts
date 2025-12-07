@@ -53,7 +53,7 @@ function base64urlToUtf8(b64url: string): string {
 
 export async function getMongoSecrets(){  
   const uri = process.env.DB || ""; 
-  const dbName = process.env.WEBDBNAME || ""; 
+  const dbName = process.env.CYPRESSDBNAME || ""; 
   if (!uri || !dbName) {
     throw new Error("Missing Mongo credentials in environment variables");
   }
