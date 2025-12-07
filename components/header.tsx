@@ -144,7 +144,7 @@ export const Header = () => {
         </nav>
         
         <div className="flex items-center gap-x-6">
-           <AccessGate />
+          <AccessGate />
           <ThemeToggleButton />
           <MobileMenu />
         </div>
