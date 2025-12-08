@@ -214,25 +214,31 @@ export function AccessGate() {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          aria-label={isAuthed ? "Guest access granted" : "Open access gate"}
-          className="flex items-center gap-2 max-md:h-9 max-md:w-9 max-md:px-0"
+     <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={isAuthed ? "Guest access (signed in)" : "Open guest access"}
+          className="
+            inline-flex items-center gap-2
+            text-[0.75rem] tracking-[0.28em] uppercase
+            font-medium
+            text-foreground/70 hover:text-foreground
+            transition-colors duration-200
+            focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60
+          "
         >
           {isAuthed ? (
             <>
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-              <span className="hidden md:inline text-xs">Activated</span>
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="hidden md:inline">Signed in</span>
             </>
           ) : (
             <>
-              <LockKeyhole className="h-4 w-4" />
-              <span className="hidden md:inline text-xs">Access</span>
+              <LockKeyhole className="h-3.5 w-3.5 text-foreground/60" />
+              <span className="hidden md:inline">Guest access</span>
             </>
           )}
-        </Button>
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="w-[22rem] p-4" align="end">

@@ -40,46 +40,6 @@ const ThemeToggleButton = () => {
   );
 };
 
-export function GatedNavLink({
-  href,
-  children,
-  active,
-  enabled,
-  showVideo,
-}: {
-  href: string;
-  children: React.ReactNode;
-  active: boolean;
-  enabled: boolean;
-  showVideo?: boolean;
-}) {
-  if (enabled) {
-    return <NavLink href={href} active={active} showVideo={showVideo}>{children}</NavLink>;
-  }
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={openAccessGate}
-            className="cursor-not-allowed opacity-60"
-          >
-            <span className={cn('flex items-center gap-2 text-sm font-bold text-white/80', active && 'font-semibold')}>
-              {children}
-            </span>
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-xs">
-          <p className="text-sm">
-            Access required — click to get a one-time passcode.
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
-
 export function NavLink({
   href,
   children,
@@ -95,18 +55,26 @@ export function NavLink({
   onClick?: () => void;
   showVideo?: boolean;
 }) {
-  const baseClasses = showVideo
-    ? "uppercase inline-block font-mono font-bold text-[#FFEEB2] hover:text-white duration-150 transition-colors ease-out"
-    : "uppercase inline-block font-mono text-foreground/60 hover:text-foreground/100 duration-150 transition-colors ease-out";
+  const baseClasses =
+    "inline-flex items-center text-[0.75rem] tracking-[0.28em] uppercase font-medium transition-colors duration-200";
 
-  const className = cn(
-    baseClasses,
-    active && 'font-semibold'
-  );
+  const paletteClasses = showVideo
+    ? "text-[#FFEEB2]/80 hover:text-[#FFEEB2]"
+    : "text-foreground/70 hover:text-foreground";
+
+  const activeClasses = active ? "text-foreground" : "";
+
+  const className = cn("font-sentient", baseClasses, paletteClasses, activeClasses);
 
   if (isExternal) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={className} onClick={onClick}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+        onClick={onClick}
+      >
         {children}
       </a>
     );
@@ -116,6 +84,57 @@ export function NavLink({
     <Link href={href} className={className} onClick={onClick}>
       {children}
     </Link>
+  );
+}
+
+export function GatedNavLink({
+  href,
+  children,
+  active,
+  enabled,
+  showVideo,
+}: {
+  href: string;
+  children: React.ReactNode;
+  active: boolean;
+  enabled: boolean;
+  showVideo?: boolean;
+}) {
+  if (enabled) {
+    return (
+      <NavLink href={href} active={active} showVideo={showVideo}>
+        {children}
+      </NavLink>
+    );
+  }
+
+  const baseClasses =
+    "font-sentient inline-flex items-center text-[0.75rem] tracking-[0.28em] uppercase font-medium transition-colors duration-200";
+  const paletteClasses = showVideo
+    ? "text-[#FFEEB2]/40 hover:text-[#FFEEB2]/50"
+    : "text-foreground/40 hover:text-foreground/50";
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={openAccessGate}
+            className="cursor-not-allowed"
+          >
+            <span className={cn(baseClasses, paletteClasses, active && "text-foreground/70")}>
+              {children}
+            </span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-xs">
+          <p className="text-xs">
+            Guest access required — click to receive a one-time passcode.
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
