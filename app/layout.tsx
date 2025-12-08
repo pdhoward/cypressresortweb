@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
-import localFont from "next/font/local";
+import { CookieConsent } from "@/components/CookieConsent";
 import "./globals.css";
 import { AppProviders } from "./providers";
 
@@ -34,12 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistMono.variable} antialiased`}
-        suppressHydrationWarning
-      >
+      <body className={`${geistMono.variable} antialiased bg-background text-foreground`}>
         <AppProviders>
           {children}
+          <CookieConsent />
         </AppProviders>
       </body>
     </html>
