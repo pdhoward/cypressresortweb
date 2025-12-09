@@ -227,27 +227,29 @@ export function AccessGate() {
             focus:outline-none focus-visible:ring-1 focus-visible:ring-primary/60
           "
         >
-          {isAuthed ? (
-            <>
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-              <span className="hidden md:inline">Signed in</span>
-            </>
-          ) : (
-            <>
-              <LockKeyhole className="h-3.5 w-3.5 text-foreground/60" />
-              <span className="hidden md:inline">Guest access</span>
-            </>
-          )}
+         {isAuthed ? (
+          <>
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="hidden md:inline">Signed in</span>
+          </>
+        ) : (
+          <>
+            <LockKeyhole className="h-3.5 w-3.5 text-white/80 md:text-foreground/60" />
+            <span className="hidden md:inline">Guest access</span>
+          </>
+        )}
+
         </button>
       </PopoverTrigger>
 
       <PopoverContent className="w-[22rem] p-4" align="end">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <LockKeyhole className="h-4 w-4" />
+           <LockKeyhole className="h-4 w-4 text-emerald-500" />
             <p className="text-sm font-medium">
               {stage === "done" ? "Guest Access Activated" : "Activate Guest Access"}
             </p>
+
 
             {/* Disclaimer icon with nested popover */}
             <Popover>
