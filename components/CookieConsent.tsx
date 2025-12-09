@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, ShieldPlus, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
@@ -199,11 +199,11 @@ return (
     {/* Floating reopen button */}
    <button
       type="button"
-      className="fixed bottom-4 right-4 z-[9998] inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white/90 px-3 py-1.5 text-[11px] font-medium shadow-md hover:bg-gray-100"
+      className="fixed bottom-4 right-4 z-[9998] inline-flex items-center justify-center rounded-full border border-gray-400 bg-white/90 p-3 shadow-md hover:bg-gray-100"
       onClick={() => setOpen(true)}
+      aria-label="Open privacy & cookie settings"
     >
-      <ShieldCheck className="h-3 w-3" aria-hidden="true" />
-      <span>Privacy settings</span>
+      <ShieldCheck className="h-6 w-6 text-gray-800" aria-hidden="true" />
     </button>
 
     {/* Modal */}
@@ -216,7 +216,16 @@ return (
       >
         <div className="flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-lg bg-white font-sans shadow-xl">
           {/* Header */}
-          <div className="border-b px-4 pb-3 pt-4">
+          <div className="border-b px-4 pb-3 pt-4 relative">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+              aria-label="Close cookie settings"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </button>
+
             <h2 id="cc-modal-title" className="text-base font-semibold">
               Privacy &amp; Cookie Settings
             </h2>
@@ -225,6 +234,7 @@ return (
               cookies to allow. Strictly necessary cookies are always on.
             </p>
           </div>
+
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto px-4 py-3 text-sm">
@@ -330,16 +340,17 @@ return (
                     <Link
                       href="/privacy"
                       aria-label="Privacy settings"
+                      onClick={() => setOpen(false)}
                       className="group inline-flex items-center justify-center rounded-full border border-gray-300 bg-white p-2 shadow-sm hover:bg-gray-100"
                     >
-                      <ShieldCheck
-                        className="h-5 w-5 text-gray-700 group-hover:text-gray-900"
+                      <ShieldPlus
+                        className="h-5 w-5 text-red-700 group-hover:text-red-900"
                         aria-hidden="true"
                       />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent side="top">
-                    <p className="text-xs">Privacy settings</p>
+                    <p className="text-xs">Privacy Policy</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>

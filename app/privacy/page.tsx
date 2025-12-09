@@ -1,5 +1,8 @@
+"use client"
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 export default function Privacy() {
   return (
@@ -8,7 +11,7 @@ export default function Privacy() {
         <CardHeader className="py-2 md:py-4">
           <CardTitle className="text-base md:text-xl">
             Privacy Policy for Cypress Resort
-          </CardTitle>
+          </CardTitle>           
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[60vh] pr-4">
@@ -167,7 +170,7 @@ export default function Privacy() {
               <p>We aren&apos;t responsible for third-party sites.</p>
 
               <h2 id="contact-us">Contact Us</h2>
-              <p>Questions? Email privacy@cypressresort.com or call [phone number].</p>
+              <p>Questions? Email privacy@cypressresort.com.</p>
 
               <h2 id="changes">Changes</h2>
               <p>We may update this policy. Check here for changes.</p>
