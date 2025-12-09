@@ -75,7 +75,6 @@
     "react-day-picker": "9.8.0",
     "react-dom": "19.2.1",
     "react-hook-form": "^7.60.0",
-    "react-native": "latest",
     "react-phone-number-input": "^3.4.14",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.4",

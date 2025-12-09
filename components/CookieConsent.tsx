@@ -1,6 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 
 type ConsentCategory = "necessary" | "functional" | "analytics" | "marketing";
 
@@ -193,12 +197,13 @@ export const CookieConsent: React.FC = () => {
 return (
   <>
     {/* Floating reopen button */}
-    <button
+   <button
       type="button"
-      className="fixed bottom-4 right-4 z-[9998] rounded-full border border-gray-300 px-4 py-2 text-xs font-medium shadow-md hover:bg-gray-800"
+      className="fixed bottom-4 right-4 z-[9998] inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white/90 px-3 py-1.5 text-[11px] font-medium shadow-md hover:bg-gray-100"
       onClick={() => setOpen(true)}
     >
-      Cookie &amp; Privacy Settings
+      <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+      <span>Privacy settings</span>
     </button>
 
     {/* Modal */}
@@ -318,18 +323,28 @@ return (
           {/* Fixed footer inside modal */}
           <div className="border-t px-4 py-3 text-[11px] text-gray-600">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <div className="flex-1">
-                View our{" "}
-                <a
-                  href="/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  Privacy Policy
-                </a>{" "}
-                for more details and your rights.
-              </div>
+             <div className="flex-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      href="/privacy"
+                      aria-label="Privacy settings"
+                      className="group inline-flex items-center justify-center rounded-full border border-gray-300 bg-white p-2 shadow-sm hover:bg-gray-100"
+                    >
+                      <ShieldCheck
+                        className="h-5 w-5 text-gray-700 group-hover:text-gray-900"
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="top">
+                    <p className="text-xs">Privacy settings</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+
               <div className="flex flex-wrap justify-end gap-2">
                 <button
                   type="button"

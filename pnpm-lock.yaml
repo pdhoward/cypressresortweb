@@ -206,9 +206,6 @@ importers:
       react-hook-form:
         specifier: ^7.60.0
         version: 7.60.0(react@19.2.1)
-      react-native:
-        specifier: latest
-        version: 0.82.1(@babel/core@7.28.5)(@types/react@19.0.0)(react@19.2.1)
       react-phone-number-input:
         specifier: ^3.4.14
         version: 3.4.14(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
