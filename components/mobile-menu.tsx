@@ -51,8 +51,7 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
             <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
             <GatedNavLink href="/reservations" active={false} enabled={isAuthenticated} showVideo={showVideo}>
               Your Reservations
-            </GatedNavLink>
-            <NavLink href="/#sign-in" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Sign In</NavLink>
+            </GatedNavLink>          
             
           </div>
         </ScrollArea>

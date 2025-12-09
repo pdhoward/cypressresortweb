@@ -59,7 +59,7 @@ export function NavLink({
     "inline-flex items-center text-[0.75rem] tracking-[0.28em] uppercase font-medium transition-colors duration-200";
 
   const paletteClasses = showVideo
-    ? "text-[#FFEEB2]/80 hover:text-[#FFEEB2]"
+    ? "text-white hover:text-[#FFEEB2]"
     : "text-foreground/70 hover:text-foreground";
 
   const activeClasses = active ? "text-foreground" : "";
@@ -86,6 +86,7 @@ export function NavLink({
     </Link>
   );
 }
+
 
 export function GatedNavLink({
   href,
@@ -137,7 +138,6 @@ export function GatedNavLink({
     </TooltipProvider>
   );
 }
-
 export const Header = () => {
   const { showVideo } = useVideo();
   const { isAuthenticated } = useAuth();
@@ -147,7 +147,14 @@ export const Header = () => {
     : "uppercase max-lg:hidden transition-colors ease-out duration-150 font-mono text-primary hover:text-primary/80";
 
   return (
-    <div className="fixed z-50 pt-3 md:pt-6 top-0 left-0 w-full">
+    <div
+      className={cn(
+        "fixed z-50 pt-3 md:pt-6 top-0 left-0 w-full transition-colors duration-500",
+        showVideo
+          ? "bg-gradient-to-b from-black/75 via-black/40 to-transparent"
+          : "bg-transparent"
+      )}
+    >
       <header className="flex items-center justify-between container">
         <Link href="/">
           <Logo className={showVideo ? "gold-text" : "text-white"} />
@@ -159,9 +166,16 @@ export const Header = () => {
           <NavLink href="/gallery" active={false} showVideo={showVideo}>Villas</NavLink>
           <NavLink href="/experiences" active={false} showVideo={showVideo}>Experiences</NavLink>
           <NavLink href="/journey" active={false} showVideo={showVideo}>The Journey</NavLink>
-          <GatedNavLink href="/reservations" active={false} enabled={isAuthenticated} showVideo={showVideo}>Your Reservations</GatedNavLink>
+          <GatedNavLink
+            href="/reservations"
+            active={false}
+            enabled={isAuthenticated}
+            showVideo={showVideo}
+          >
+            Your Reservations
+          </GatedNavLink>
         </nav>
-        
+
         <div className="flex items-center gap-x-6">
           <AccessGate />
           <ThemeToggleButton />
