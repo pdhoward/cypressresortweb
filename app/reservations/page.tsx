@@ -181,10 +181,10 @@ export default function Reservations() {
         <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-              Your Reservations
+              Administrator: View All Reservations
             </h1>
             <p className="mt-1 text-sm text-muted-foreground max-w-xl">
-              Review upcoming stays, guest details, and key booking information for your Cypress Resort reservations.
+              Review upcoming stays, guest details, and key booking information for Cypress Resort.
             </p>
           </div>
         </div>
