@@ -3,13 +3,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 mt-16">
-      <Card className="w-full max-w-2xl mx-auto max-h-[80vh]">
-        <CardHeader>
-          <CardTitle>Privacy Policy for Cypress Resort</CardTitle>
+    <div className="h-screen bg-background flex items-center justify-center p-4 ">
+      <Card className="w-full max-w-2xl mx-auto max-h-[80vh] flex flex-col mt-4">
+        <CardHeader className="py-2 md:py-4">
+          <CardTitle className="text-base md:text-xl">
+            Privacy Policy for Cypress Resort
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[70vh] pr-4">
+          <ScrollArea className="h-[60vh] pr-4">
             <div className="prose dark:prose-invert max-w-none text-xs space-y-6">
               <h2 id="scope">Scope</h2>
               <p>This Privacy Policy describes how Thin Spaces, owner of Cypress Resort (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;), handles personal information collected through our website, bookings, and interactions. We are a family-owned real estate development company building the next chapter of hospitality in beautiful places. This policy applies to U.S. residents and does not cover employment data or non-personal information.</p>
