@@ -14,6 +14,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from "@/context/auth-context";
 import { useVideo } from "@/context/video-context";
+import { AccessGate } from "@/components/security/access-gate";
 
 // Reuse NavLink and GatedNavLink from Header (assume they are exported or shared)
 import { NavLink, GatedNavLink } from './header'; // Adjust path if needed
@@ -34,12 +35,10 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
           <MenuIcon className="h-6 w-6" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0">
+      <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0 ">
         <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-gray-800">
           <DialogTitle className="text-xl font-bold text-white">Menu</DialogTitle>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:text-white/70">
-            <ChevronDown className="h-5 w-5 rotate-180" />
-          </Button>
+          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:text-white/70"> </Button>
         </DialogHeader>
         <ScrollArea className="flex-1 px-4 py-6">
           <div className="flex flex-col space-y-4">
@@ -49,9 +48,10 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
             </NavLink>
             <NavLink href="/experiences" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Experiences</NavLink>
             <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
-            <GatedNavLink href="/reservations" active={false} enabled={isAuthenticated} showVideo={showVideo}>
+            <NavLink href="/reservations" active={false} showVideo={showVideo}>
               Your Reservations
-            </GatedNavLink>          
+            </NavLink> 
+            <AccessGate />         
             
           </div>
         </ScrollArea>

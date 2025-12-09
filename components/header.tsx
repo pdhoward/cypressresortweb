@@ -166,14 +166,13 @@ export const Header = () => {
           <NavLink href="/gallery" active={false} showVideo={showVideo}>Villas</NavLink>
           <NavLink href="/experiences" active={false} showVideo={showVideo}>Experiences</NavLink>
           <NavLink href="/journey" active={false} showVideo={showVideo}>The Journey</NavLink>
-          <GatedNavLink
+          <NavLink
             href="/reservations"
-            active={false}
-            enabled={isAuthenticated}
+            active={false}         
             showVideo={showVideo}
           >
             Your Reservations
-          </GatedNavLink>
+          </NavLink>
         </nav>
 
         <div className="flex items-center gap-x-6">
