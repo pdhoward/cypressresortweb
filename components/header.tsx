@@ -147,7 +147,7 @@ export const Header = () => {
     : "uppercase max-lg:hidden transition-colors ease-out duration-150 font-mono text-primary hover:text-primary/80";
 
   return (
-    <div className="fixed z-50 pt-8 md:pt-14 top-0 left-0 w-full">
+    <div className="fixed z-50 pt-3 md:pt-6 top-0 left-0 w-full">
       <header className="flex items-center justify-between container">
         <Link href="/">
           <Logo className={showVideo ? "gold-text" : "text-white"} />
