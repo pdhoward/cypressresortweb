@@ -81,6 +81,24 @@ export function AccessGate() {
     }
   }, [token]);
 
+  // any page can open the access gate programmatically
+  // see lib/access-gate for companion function
+
+  useEffect(() => {
+    // Preferred: direct global function (no timing issues)
+    (window as any).__openAccessGate = () => setOpen(true);
+
+    // Back-compat: custom event
+    const onOpen = () => setOpen(true);
+    window.addEventListener('open-access-gate', onOpen);
+
+    return () => {
+      delete (window as any).__openAccessGate;
+      window.removeEventListener('open-access-gate', onOpen);
+    };
+  }, []);
+
+
   useEffect(() => {
     if (isAuthed) {
       setStage("done");
@@ -89,6 +107,7 @@ export function AccessGate() {
     }
   }, [isAuthed]);
 
+  // Auto-verify once 6 digits entered
   useEffect(() => {
     if (stage === "otp" && isSix && !verifying) {
       verify(otp);
@@ -96,6 +115,7 @@ export function AccessGate() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp, stage]);
 
+  // countdown effect for resend
   useEffect(() => {
     if (cooldown <= 0) return;
     const t = setInterval(() => setCooldown((s) => (s > 0 ? s - 1 : 0)), 1000);

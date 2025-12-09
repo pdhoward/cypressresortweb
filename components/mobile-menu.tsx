@@ -59,7 +59,7 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
             </NavLink>
             <NavLink href="/experiences" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Experiences</NavLink>
             <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
-            <NavLink href="/reservations" active={false} showVideo={showVideo}>
+            <NavLink href="/reservations" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>
               Your Reservations
             </NavLink> 
             <AccessGate />         
