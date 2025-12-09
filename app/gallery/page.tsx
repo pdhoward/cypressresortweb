@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Background } from '@/components/Background';
 import { Header } from '@/components/header';
-import { VillaCard } from '@/components/VillaCard';
+import { VillaCard } from '@/components/cards/VillaCard';
 import type { Unit } from '@/types/unit';
 
 const containerVariants = {
