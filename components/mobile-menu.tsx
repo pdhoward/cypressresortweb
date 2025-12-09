@@ -31,8 +31,19 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("lg:hidden text-foreground hover:text-foreground/70", className)} aria-label="Open mobile menu">
-          <MenuIcon className="h-6 w-6" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "lg:hidden",
+            showVideo
+              ? "text-white bg-black/60 hover:bg-black/80 rounded-full border border-white/40"
+              : "text-foreground hover:text-foreground/70",
+            className
+          )}
+          aria-label="Open mobile menu"
+        >
+          <MenuIcon className="h-7 w-7" />
         </Button>
       </DialogTrigger>
       <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0 ">
