@@ -199,7 +199,14 @@ return (
     {/* Floating reopen button */}
    <button
       type="button"
-      className="fixed bottom-4 right-4 z-[9998] inline-flex items-center justify-center rounded-full border border-gray-400 bg-white/90 p-3 shadow-md hover:bg-gray-100"
+      className="
+        fixed bottom-4 left-4 z-[9998]
+        inline-flex items-center justify-center rounded-full
+        border border-stone-300
+        bg-stone-300
+        p-3 shadow-md
+        hover:bg-stone-400
+      "
       onClick={() => setOpen(true)}
       aria-label="Open privacy & cookie settings"
     >
