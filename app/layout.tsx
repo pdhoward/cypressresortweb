@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/CookieConsent";
+
 import "./globals.css";
 import { AppProviders } from "./providers";
 
@@ -33,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+     <html lang="en" suppressHydrationWarning>
       <body className={`${geistMono.variable} antialiased bg-background text-foreground`}>
         <AppProviders>
           {children}
