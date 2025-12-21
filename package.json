@@ -65,7 +65,7 @@
     "maath": "latest",
     "mongodb": "^7.0.0",
     "motion": "^12.23.25",
-    "next": "15.2.6",
+    "next": "16.1.0",
     "next-themes": "latest",
     "nodemailer": "^7.0.11",
     "path": "latest",
@@ -97,6 +97,6 @@
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }
