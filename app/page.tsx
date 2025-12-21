@@ -18,6 +18,8 @@ export default function Home() {
         src={`${widgetBaseUrl}/voice-widget.js`}
         strategy="afterInteractive"
         data-tenant-widget-key="w_cypress_main_7f1b0e9c64f54d1a"
+        data-agent-id="conciergev2"
       />
+
     </>
 )}
