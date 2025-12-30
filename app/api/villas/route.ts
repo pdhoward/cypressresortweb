@@ -6,11 +6,12 @@ export async function GET() {
 
   const { uri, dbName } = await getMongoSecrets()
   const { db } = await getMongoConnection(uri, dbName);
-  const collection = db.collection('villas');
+  const collection = db.collection('villas'); 
 
-  try {     
-    const agents = await collection.find({}).toArray();
-    return NextResponse.json(agents);
+  try {
+    
+    const villas = await collection.find({}).toArray();
+    return NextResponse.json(villas);
   } catch (error) {
     console.error('Error fetching villas:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
