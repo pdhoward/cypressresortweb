@@ -1,23 +1,24 @@
 'use client';
 
 import { cn } from "@/lib/utils";
-import { ChevronDown, Menu as MenuIcon } from 'lucide-react';
+import { Menu as MenuIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/context/auth-context";
 import { useVideo } from "@/context/video-context";
 import { AccessGate } from "@/components/security/access-gate";
 
 // Reuse NavLink and GatedNavLink from Header (assume they are exported or shared)
-import { NavLink, GatedNavLink } from './header'; // Adjust path if needed
+import { NavLink, GatedNavLink } from "./header"; // Adjust path if needed
 
 interface MobileMenuProps {
   className?: string;
@@ -27,6 +28,8 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const { showVideo } = useVideo();
+
+  const closeMenu = () => setIsOpen(false);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -46,24 +49,48 @@ export const MobileMenu = ({ className }: MobileMenuProps) => {
           <MenuIcon className="h-7 w-7" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0 ">
+
+      {/* Hide shadcn's default top-right X button and use our own "Close" */}
+      <DialogContent className="w-full max-w-md h-full max-h-[90vh] rounded-t-lg flex flex-col bg-gray-900 text-white border-gray-800 p-0 [&>button]:hidden">
         <DialogHeader className="flex flex-row items-center justify-between p-4 border-b border-gray-800">
           <DialogTitle className="text-xl font-bold text-white">Menu</DialogTitle>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="text-white hover:text-white/70"> </Button>
+
+          <DialogClose asChild>
+            <Button
+              variant="ghost"
+              className="text-white hover:text-white/70"
+              aria-label="Close mobile menu"
+            >
+              Close
+            </Button>
+          </DialogClose>
         </DialogHeader>
+
         <ScrollArea className="flex-1 px-4 py-6">
           <div className="flex flex-col space-y-4">
-            <NavLink href="/about" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>About</NavLink>
-            <NavLink href="/gallery" active={false} showVideo={showVideo}>
+            <NavLink href="/about" active={false} onClick={closeMenu} showVideo={showVideo}>
+              About
+            </NavLink>
+
+            {/* ✅ Add onClick here too so it closes */}
+            <NavLink href="/gallery" active={false} onClick={closeMenu} showVideo={showVideo}>
               Villas
             </NavLink>
-            <NavLink href="/experiences" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>Experiences</NavLink>
-            <NavLink href="/journey" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>The Journey</NavLink>
-            <NavLink href="/reservations" active={false} onClick={() => setIsOpen(false)} showVideo={showVideo}>
+
+            <NavLink href="/experiences" active={false} onClick={closeMenu} showVideo={showVideo}>
+              Experiences
+            </NavLink>
+
+            <NavLink href="/journey" active={false} onClick={closeMenu} showVideo={showVideo}>
+              The Journey
+            </NavLink>
+
+            <NavLink href="/reservations" active={false} onClick={closeMenu} showVideo={showVideo}>
               Your Reservations
-            </NavLink> 
-            <AccessGate />         
-            
+            </NavLink>
+
+            {/* 🚫 No closeMenu here by design (guest OTP flow stays open) */}
+            <AccessGate />
           </div>
         </ScrollArea>
       </DialogContent>
